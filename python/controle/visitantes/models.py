@@ -1,6 +1,19 @@
 from django.db import models
 
 class Visitante(models.Model):
+    STATUS_VISITANTE = [
+        ("AGUARDANDO", "Aguardando Autorização"),
+        ("EM_VISITA", "Em Visita"),
+        ("FINALIZADO", "Visita Finalizada"),
+    ]
+
+    status = models.CharField(
+        verbose_name="Status",
+        max_length=10,
+        choices=STATUS_VISITANTE,
+        default="AGUARDANDO"
+    )
+
     registrado_por = models.ForeignKey(
         "porteiros.Porteiro",
         verbose_name="Porteiro responsável pelo registro",
@@ -59,6 +72,30 @@ class Visitante(models.Model):
         blank=True,
     )
 
+    def get_horario_saida(self):
+        if self.horario_saida:
+            return self.horario_saida
+
+        return "Horário de saída não registrado"
+
+    def get_horario_autorizacao(self):
+        if self.horario_autorizacao:
+            return self.horario_autorizacao
+
+        return "Visitante aguardando liberação"
+    
+    def get_morador_responsavel(self):
+        if self.morador_responsavel:
+            return self.morador_responsavel
+
+        return "Aguardando..."
+
+    def get_placa_veiculo(self):
+        if self.placa_veiculo:
+            return self.placa_veiculo
+
+        return "Sem carro..."
+       
     class Meta:
         verbose_name="Visitante"
         verbose_name_plural="Visitantes"
